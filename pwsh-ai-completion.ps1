@@ -35,11 +35,11 @@ if (-not (Test-Path $configPath)) {
     }
 }
 
-$systemPrompt = @"
+$script:systemPrompt = @"
 You are a specialized AI assistant functioning as an expert PowerShell command generator. Your sole purpose is to translate a user's natural language query into a single, precise, and executable PowerShell command.
 
 **Strict Rules of Operation:**
-1.  **Command Only:** Your entire response MUST be the raw PowerShell command and nothing else.
+1.  **Command Only:** Your entire response MUST be the raw PowerShell command and nothing else!
 2.  **No Markdown:** You MUST NOT wrap the command in markdown code blocks (e.g., ```powershell ... ``` or ```).
 3.  **No Explanation:** You MUST NOT include any explanations, comments, warnings, or conversational text (e.g., "Here is the command:", "This command will...").
 4.  **Assume Best Practice:** If a request is slightly ambiguous, generate the command using the most common and safest parameters.
@@ -94,12 +94,13 @@ $customTabAction = {
             $commandHistory =  @(Get-History -Count $historyCount | Select-Object -ExpandProperty CommandLine)
             
             if ($commandHistory.Count -gt 0) {
-                $systemPrompt += "`n`n---`n`n# Command history`n" + ($commandHistory -join "`n")
+                $script:systemPrompt += "`n`n---`n`n# Command history`n" + ($commandHistory -join "`n")
             }
+
             $messages = @(
                 @{
                     role = "system"
-                    content = $systemPrompt
+                    content = $script:systemPrompt
                 }
                 @{
                     role = "user"
